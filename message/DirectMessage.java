@@ -1,12 +1,17 @@
 package message;
+
 import account.AccountStatus;
 import account.Account;
+
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 /**
  * Represents a private message sent to a specific recipient.
  */
 
-public class DirectMessage extends Message{
+public class DirectMessage extends Message {
     private Account to;
 
     /**
@@ -18,9 +23,22 @@ public class DirectMessage extends Message{
      * @param recipient The recipient of the message.
      */
 
-    public DirectMessage(Account from, Account to, Message repliedTo, String body){
+    public DirectMessage(Account from, Account to, Message repliedTo, String body) {
         super(from, repliedTo, body);
         this.to = to;
+    }
+
+    // New constructor for streaming
+    public DirectMessage(BufferedReader br, Message repliedTo) throws IOException {
+        super(br, repliedTo);
+        this.to = new Account(br);
+    }
+
+    // Save method
+    @Override
+    public void save(BufferedWriter bw) throws IOException {
+        super.save(bw);
+        to.save(bw);
     }
 
     /**
@@ -29,7 +47,7 @@ public class DirectMessage extends Message{
      * @return The recipient's name followed by the message details.
      */
     @Override
-    public String toString(){
+    public String toString() {
         return "To: " + to + "\n" + super.toString();
     }
 }

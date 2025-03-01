@@ -2,6 +2,11 @@ package message;
 import account.AccountStatus;
 import account.Account; 
 
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+
 /**
  * Represents a public post in a group.
  */
@@ -21,6 +26,19 @@ public class Post extends Message {
     public Post(Account from, Group group, Message repliedTo, String body){
         super(from, repliedTo, body);
         this.group = group;
+    }
+
+    // New constructor for streaming
+    public Post(BufferedReader br, Message repliedTo) throws IOException {
+        super(br, repliedTo);
+        this.group = new Group(br);
+    }
+
+    // Save method
+    @Override
+    public void save(BufferedWriter bw) throws IOException {
+        super.save(bw);
+        group.save(bw);
     }
 
     /**

@@ -1,22 +1,28 @@
 package account;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 /**
- * Represents an account in the system. Each account has a unique ID, a name, and a status.
+ * Represents an account in the system. Each account has a unique ID, a name,
+ * and a status.
  * The status can be Normal, Muted, or Blocked.
  * 
  * @author Utsav Shah
- * @version 1.0
- * @since 02/08/2025
+ * @version 2.0
+ * @since 03/01/2025
  */
 public class Account {
-    private String name;        // The name of the account
-    private int id;             // The unique ID of the account
+    private String name; // The name of the account
+    private int id; // The unique ID of the account
     private static int nextID = 1; // Static counter for generating unique IDs
     private AccountStatus status; // The status of the account (Normal, Muted, or Blocked)
 
     /**
      * Constructs a new Account with the given name.
-     * The account ID is automatically generated, and the status is set to Normal by default.
+     * The account ID is automatically generated, and the status is set to Normal by
+     * default.
      * 
      * @param name The name of the account. Cannot be null or empty.
      * @throws IllegalArgumentException If the name is null or empty.
@@ -28,6 +34,22 @@ public class Account {
         this.name = name;
         this.id = nextID++;
         this.status = AccountStatus.Normal;
+    }
+
+    // New constructor for streaming
+    public Account(BufferedReader br) throws IOException {
+        this.name = br.readLine();
+        this.id = Integer.parseInt(br.readLine());
+        nextID = Integer.parseInt(br.readLine());
+        this.status = AccountStatus.valueOf(br.readLine());
+    }
+
+    // Save method
+    public void save(BufferedWriter bw) throws IOException {
+        bw.write(name + "\n");
+        bw.write(id + "\n");
+        bw.write(nextID + "\n");
+        bw.write(status.toString() + "\n");
     }
 
     /**
