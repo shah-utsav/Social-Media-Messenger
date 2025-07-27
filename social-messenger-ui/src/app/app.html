@@ -1,0 +1,41 @@
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">💬</div>
+        <h1>Social Messenger</h1>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a routerLink="/chat" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span class="nav-text">Chats</span>
+      </a>
+      <a routerLink="/groups" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text">Groups</span>
+      </a>
+      <a routerLink="/profile" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-text">Profile</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">John Doe</span>
+          <span class="user-status online">Online</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

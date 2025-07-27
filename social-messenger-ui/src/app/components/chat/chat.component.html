@@ -1,0 +1,190 @@
+<div class="chat-container">
+  <!-- Chat List Panel -->
+  <div class="chat-list-panel">
+    <div class="chat-list-header">
+      <h2 class="gradient-text">Messages</h2>
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search conversations..." 
+          [(ngModel)]="searchQuery"
+          class="search-input"
+        >
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+    
+    <div class="chat-list">
+      <div 
+        *ngFor="let chat of filteredChats" 
+        class="chat-item"
+        [class.active]="chat.isActive"
+        (click)="selectChat(chat)"
+      >
+        <div class="chat-avatar">
+          <span class="avatar-text">{{ chat.name.charAt(0) }}</span>
+                      <div class="status-indicator" [class]="chat.participants[1].status"></div>
+        </div>
+        
+        <div class="chat-info">
+          <div class="chat-header">
+            <h3 class="chat-name">{{ chat.name }}</h3>
+            <span class="chat-time" *ngIf="chat.lastMessage">
+              {{ formatTime(chat.lastMessage.timestamp) }}
+            </span>
+          </div>
+          
+          <div class="chat-preview">
+            <p class="last-message" *ngIf="chat.lastMessage">
+              {{ chat.lastMessage.content.length > 50 ? chat.lastMessage.content.substring(0, 50) + '...' : chat.lastMessage.content }}
+            </p>
+            <div class="chat-meta">
+              <span class="chat-type" [class]="chat.type">{{ chat.type === 'group' ? '👥' : '💬' }}</span>
+              <span class="unread-badge" *ngIf="chat.unreadCount > 0">{{ chat.unreadCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat-area" *ngIf="selectedChat; else noChatSelected">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <span class="avatar-text">{{ selectedChat.name.charAt(0) }}</span>
+                      <div class="status-indicator" [class]="selectedChat.participants[1].status"></div>
+        </div>
+        
+        <div class="chat-details">
+          <h3 class="chat-title">{{ selectedChat.name }}</h3>
+          <p class="chat-subtitle">
+                          <span *ngIf="selectedChat.type === 'direct'">
+                {{ selectedChat.participants[1].status === 'online' ? 'Online' : 'Last seen recently' }}
+              </span>
+            <span *ngIf="selectedChat.type === 'group'">
+              {{ selectedChat.participants.length }} members
+            </span>
+          </p>
+        </div>
+      </div>
+      
+      <div class="chat-actions">
+        <button class="action-btn" title="Search">
+          <span>🔍</span>
+        </button>
+        <button class="action-btn" title="More options">
+          <span>⋯</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container" #messageContainer>
+      <div class="messages-list">
+        <div 
+          *ngFor="let message of messages; trackBy: trackByMessageId" 
+          class="message-wrapper"
+          [class.own-message]="message.sender.id === currentUser.id"
+        >
+          <div class="message">
+            <div class="message-avatar" *ngIf="message.sender.id !== currentUser.id">
+              <span class="avatar-text">{{ message.sender.name.charAt(0) }}</span>
+            </div>
+            
+            <div class="message-content">
+              <div class="message-header" *ngIf="message.sender.id !== currentUser.id">
+                <span class="sender-name">{{ message.sender.name }}</span>
+                <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+              </div>
+              
+              <div class="message-bubble">
+                <p class="message-text">{{ message.content }}</p>
+                
+                <!-- Message Reactions -->
+                <div class="message-reactions" *ngIf="message.reactions.length > 0">
+                  <div 
+                    *ngFor="let reaction of message.reactions" 
+                    class="reaction"
+                    (click)="addReaction(message, reaction.emoji)"
+                  >
+                    <span class="reaction-emoji">{{ reaction.emoji }}</span>
+                    <span class="reaction-count">{{ reaction.count }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="message-footer" *ngIf="message.sender.id === currentUser.id">
+                <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+                <span class="message-status">✓✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="message-input-container">
+      <div class="input-actions">
+        <button class="action-btn" title="Attach file">
+          <span>📎</span>
+        </button>
+        <button class="action-btn" title="Add emoji">
+          <span>😊</span>
+        </button>
+      </div>
+      
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          placeholder="Type a message..."
+          class="message-input"
+          #messageInput
+        >
+      </div>
+      
+      <button 
+        class="send-btn"
+        [class.disabled]="!newMessage.trim()"
+        (click)="sendMessage()"
+        title="Send message"
+      >
+        <span>➤</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- No Chat Selected -->
+  <ng-template #noChatSelected>
+    <div class="no-chat-selected">
+      <div class="welcome-content">
+        <div class="welcome-icon">💬</div>
+        <h2 class="gradient-text">Welcome to Social Messenger</h2>
+        <p>Select a conversation to start messaging</p>
+        <div class="features-list">
+          <div class="feature-item">
+            <span class="feature-icon">🚀</span>
+            <span>Real-time messaging</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">👥</span>
+            <span>Group conversations</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">😊</span>
+            <span>Emoji reactions</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📱</span>
+            <span>Responsive design</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div> 

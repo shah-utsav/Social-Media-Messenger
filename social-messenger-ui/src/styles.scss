@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import app styles */
+@use './app/app.scss';
+
+/* Global CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  overflow-x: hidden;
+}
